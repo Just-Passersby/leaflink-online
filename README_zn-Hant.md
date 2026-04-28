@@ -22,8 +22,26 @@
 提供Dockerfile和Docker Compose用於快速建立Demo環境。
 
 ## 開發環境
+### 前端
 前端使用[fnm](https://github.com/Schniz/fnm)管理Node.js (SvelteKit依賴Node.js)\
-套件管理工具使用`pnpm`
+套件管理工具使用`pnpm`\
+進入前端開發需要進入`frontend`目錄
+開發時使用以下指令：
+| 指令 | 說明 |
+| :-: | :- |
+| `pnpm dev --open`| 運行dev Server監聽開發變化，`Ctrl+C`關閉 |
+> 備註： `--open`會自動打開分頁，如果不希望自動打開分頁請把該參數刪除
+
+### 後端
+FastAPI (待補充)
+
+### 專案目錄架構
+```
+leaflink-online
+├── frontend/
+├── backend/   #待建立
+└── README.md
+```
 
 ## MVP
 ### 預定目標
@@ -47,7 +65,9 @@ ER圖待補
 - [Just-Passersby](https://github.com/Just-Passersby): Database + API + Docker部署 + 專題規劃
 - [Lcd0327](https://github.com/Lcd0327): 前端開發 + API整合
 
-# 額外說明
+## 額外說明
 - Markdown純文字存在DB內
 - 先不做圖片上傳，降低複雜度
-- Docker Compose等到前端開發完成再做
+
+## 許可證
+leaflink-online使用[Apache 2.0許可證](LICENSE)
