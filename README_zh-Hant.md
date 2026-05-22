@@ -23,7 +23,7 @@
 
 ## 開發環境
 ### 前端
-前端使用 [fnm](https://github.com/Schniz/fnm)管理 Node.js (SvelteKit 依賴 Node.js)\
+前端使用 [fnm](https://github.com/Schniz/fnm) 管理 Node.js (SvelteKit 依賴 Node.js)\
 套件管理工具使用 `pnpm` \
 進入前端開發需要進入 `frontend` 目錄
 開發時使用以下指令：
