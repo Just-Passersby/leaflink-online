@@ -67,6 +67,56 @@ leaflink-online
 ## 資料庫設計
 ![](./docs/webFP.svg)
 
+## 資料庫正規化分析
+
+### 1NF（第一正規化）
+
+所有資料表均滿足：
+- 每個欄位儲存不可分割的原子值，無重複群組
+- 各資料表均有明確定義的主鍵
+
+**結果：全部通過 ✓**
+
+### 2NF（第二正規化）
+
+2NF 要求消除「部分功能相依」——非主鍵屬性必須完全依賴整個主鍵，不能只依賴複合主鍵的一部分。
+
+唯一具有複合主鍵的資料表為 `note_tags(note_id, tag_id)`，其中無任何非主鍵屬性，故不存在部分相依。其餘資料表皆為單一欄位主鍵，2NF 自動成立。
+
+**結果：全部通過 ✓**
+
+### 3NF（第三正規化）
+
+3NF 要求消除「遞移相依」——非主鍵屬性不得透過其他非主鍵屬性間接依賴主鍵。
+
+| 資料表 | 說明 |
+| :--- | :--- |
+| `users` | `username`、`email` 均為 UNIQUE NOT NULL，皆為候選鍵；無遞移相依 ✓ |
+| `vaults` | 所有屬性直接依賴 `id`；無遞移相依 ✓ |
+| `notes` | 所有屬性直接依賴 `id`；`search_vector` 為衍生欄位（`GENERATED`），不構成相依問題 ✓ |
+| `links` | `(src_note, dest_note)` 具有 UNIQUE 約束，為候選鍵；無遞移相依 ✓ |
+| `tags` | `name` 為 UNIQUE NOT NULL，為候選鍵；無遞移相依 ✓ |
+| `note_tags` | 無非主鍵屬性，trivially 滿足 ✓ |
+
+**結果：全部通過 ✓**
+
+### BCNF（Boyce-Codd 正規化）
+
+BCNF 是比 3NF 更嚴格的標準，要求每個「決定因子」（Determinant）都必須是候選鍵。
+
+| 資料表 | 候選鍵 | BCNF |
+| :--- | :--- | :---: |
+| `users` | `id`、`username`、`email` | ✓ |
+| `vaults` | `id` | ✓ |
+| `notes` | `id` | ✓ |
+| `links` | `id`、`(src_note, dest_note)` | ✓ |
+| `tags` | `id`、`name` | ✓ |
+| `note_tags` | `(note_id, tag_id)` | ✓ |
+
+所有資料表中，每個決定因子均為候選鍵，無 BCNF 違規。
+
+**結果：全部通過 ✓**
+
 ## 分工
 - [Just-Passersby](https://github.com/Just-Passersby): Database + API + Docker 部署 + 專題規劃
 - [Lcd0327](https://github.com/Lcd0327): 前端開發 + API整合
