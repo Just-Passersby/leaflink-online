@@ -9,3 +9,8 @@ Thumbs.db
 # Local design artifacts (not for version control)
 docs/db.md
 
+# Python
+backend/.venv/
+**/__pycache__/
+*.pyc
+
