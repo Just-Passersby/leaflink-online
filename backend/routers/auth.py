@@ -39,8 +39,9 @@ def _set_auth_cookie(response: Response, token: str) -> None:
     )
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=UserResponse, summary="註冊新帳號")
 async def register(body: RegisterRequest, response: Response, db: DBConn):
+    """建立新使用者帳號，成功後自動登入（設定 cookie）。"""
     existing = await db.fetchrow(
         "SELECT id FROM users WHERE username=$1 OR email=$2",
         body.username,
@@ -61,8 +62,9 @@ async def register(body: RegisterRequest, response: Response, db: DBConn):
     return dict(row)
 
 
-@router.post("/login", response_model=UserResponse)
+@router.post("/login", response_model=UserResponse, summary="登入")
 async def login(body: LoginRequest, response: Response, db: DBConn):
+    """驗證帳密並設定 `access_token` cookie。"""
     row = await db.fetchrow(
         "SELECT id, username, email, password_hash, created_at FROM users WHERE username=$1",
         body.username,
@@ -74,14 +76,16 @@ async def login(body: LoginRequest, response: Response, db: DBConn):
     return {"id": row["id"], "username": row["username"], "email": row["email"], "created_at": row["created_at"]}
 
 
-@router.post("/logout")
+@router.post("/logout", summary="登出")
 async def logout(response: Response):
+    """清除 `access_token` cookie。"""
     response.delete_cookie("access_token")
     return {"message": "登出成功"}
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserResponse, summary="取得目前登入使用者資訊")
 async def me(current_user: CurrentUser, db: DBConn):
+    """從 cookie 讀取 JWT，回傳目前登入的使用者資料。"""
     row = await db.fetchrow(
         "SELECT id, username, email, created_at FROM users WHERE id=$1",
         current_user["id"],

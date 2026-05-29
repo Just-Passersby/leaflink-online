@@ -1,16 +1,16 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class VaultCreate(BaseModel):
-    name: str
-    public: bool = False
+    name: str = Field(..., max_length=255, examples=["My Linux Notes"])
+    public: bool = Field(default=False, examples=[True])
 
 
 class VaultUpdate(BaseModel):
-    name: str | None = None
-    public: bool | None = None
+    name: str | None = Field(default=None, max_length=255, examples=["Updated Vault Name"])
+    public: bool | None = Field(default=None, examples=[False])
 
 
 class VaultResponse(BaseModel):

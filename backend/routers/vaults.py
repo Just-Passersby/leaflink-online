@@ -5,12 +5,13 @@ from fastapi import APIRouter, Query
 
 from deps import DBConn, CurrentUser, OptionalUser
 from helpers import get_vault_checked
-from schemas.vault import VaultCreate, VaultDetailResponse, VaultUpdate
+from schemas.common import PagedResponse
+from schemas.vault import VaultCreate, VaultDetailResponse, VaultResponse, VaultUpdate
 
 router = APIRouter(tags=["vaults"])
 
 
-@router.get("/vaults/mine")
+@router.get("/vaults/mine", response_model=PagedResponse[VaultResponse], summary="取得自己的所有 Vault")
 async def get_my_vaults(
     db: DBConn,
     current_user: CurrentUser,
@@ -25,10 +26,10 @@ async def get_my_vaults(
     )
     total = int(rows[0]["total"]) if rows else 0
     items = [{"id": r["id"], "name": r["name"], "public": r["public"], "created_at": r["created_at"]} for r in rows]
-    return {"items": items, "total": total, "page": page, "size": size, "pages": math.ceil(total / size) if total else 0}
+    return PagedResponse.build(items, total, page, size)
 
 
-@router.get("/vaults/explore")
+@router.get("/vaults/explore", response_model=PagedResponse[VaultDetailResponse], summary="瀏覽所有公開 Vault")
 async def explore_vaults(
     db: DBConn,
     page: Annotated[int, Query(ge=1)] = 1,
@@ -47,15 +48,16 @@ async def explore_vaults(
          "owner_username": r["owner_username"], "created_at": r["created_at"]}
         for r in rows
     ]
-    return {"items": items, "total": total, "page": page, "size": size, "pages": math.ceil(total / size) if total else 0}
+    return PagedResponse.build(items, total, page, size)
 
 
-@router.get("/vaults/{vault_id}", response_model=VaultDetailResponse)
+@router.get("/vaults/{vault_id}", response_model=VaultDetailResponse, summary="取得指定 Vault")
 async def get_vault(vault_id: int, db: DBConn, user: OptionalUser):
+    """Public Vault 不需要認證；Private Vault 需要認證且必須是 owner。"""
     return await get_vault_checked(db, vault_id, user)
 
 
-@router.post("/vaults", status_code=201, response_model=VaultDetailResponse)
+@router.post("/vaults", status_code=201, response_model=VaultDetailResponse, summary="建立新 Vault")
 async def create_vault(body: VaultCreate, db: DBConn, current_user: CurrentUser):
     row = await db.fetchrow(
         "INSERT INTO vaults(owner, name, public) VALUES($1,$2,$3)"
@@ -65,7 +67,7 @@ async def create_vault(body: VaultCreate, db: DBConn, current_user: CurrentUser)
     return {**dict(row), "owner_username": current_user["username"]}
 
 
-@router.patch("/vaults/{vault_id}", response_model=VaultDetailResponse)
+@router.patch("/vaults/{vault_id}", response_model=VaultDetailResponse, summary="更新 Vault 資訊")
 async def update_vault(vault_id: int, body: VaultUpdate, db: DBConn, current_user: CurrentUser):
     vault = await get_vault_checked(db, vault_id, current_user, require_owner=True)
 
@@ -90,7 +92,8 @@ async def update_vault(vault_id: int, body: VaultUpdate, db: DBConn, current_use
     return {**dict(row), "owner_username": current_user["username"]}
 
 
-@router.delete("/vaults/{vault_id}", status_code=204)
+@router.delete("/vaults/{vault_id}", status_code=204, summary="刪除 Vault")
 async def delete_vault(vault_id: int, db: DBConn, current_user: CurrentUser):
+    """刪除 Vault 會 cascade 刪除旗下所有 notes 和 links。"""
     await get_vault_checked(db, vault_id, current_user, require_owner=True)
     await db.execute("DELETE FROM vaults WHERE id=$1", vault_id)

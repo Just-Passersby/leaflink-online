@@ -7,7 +7,8 @@ from fastapi import APIRouter, Query
 from deps import DBConn, CurrentUser, OptionalUser
 from errors import AppError
 from helpers import get_vault_checked
-from schemas.note import NoteCreate, NoteDetail, NoteUpdate
+from schemas.common import PagedResponse
+from schemas.note import NoteCreate, NoteDetail, NoteListItem, NoteUpdate
 
 router = APIRouter(tags=["notes"])
 
@@ -82,7 +83,7 @@ async def _batch_tags(db, note_ids: list[int]) -> dict[int, list]:
     return tags_by_note
 
 
-@router.get("/vaults/{vault_id}/notes")
+@router.get("/vaults/{vault_id}/notes", response_model=PagedResponse[NoteListItem], summary="取得 Vault 的筆記列表")
 async def list_notes(
     vault_id: int,
     db: DBConn,
@@ -90,6 +91,7 @@ async def list_notes(
     page: Annotated[int, Query(ge=1)] = 1,
     size: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
+    """List view，不含 content，減少傳輸量。Public Vault 不需要認證。"""
     await get_vault_checked(db, vault_id, user)
     offset = (page - 1) * size
     rows = await db.fetch(
@@ -106,11 +108,12 @@ async def list_notes(
          "tags": tags_by_note[r["id"]]}
         for r in rows
     ]
-    return {"items": items, "total": total, "page": page, "size": size, "pages": math.ceil(total / size) if total else 0}
+    return PagedResponse.build(items, total, page, size)
 
 
-@router.get("/notes/{note_id}", response_model=NoteDetail)
+@router.get("/notes/{note_id}", response_model=NoteDetail, summary="取得筆記詳情")
 async def get_note(note_id: int, db: DBConn, user: OptionalUser):
+    """含 content、tags（inline）、backlinks（inline）。"""
     note = await _get_note_or_raise(db, note_id)
     vault_row = await db.fetchrow("SELECT public, owner FROM vaults WHERE id=$1", note["vault_id"])
     if not vault_row["public"]:
@@ -121,8 +124,12 @@ async def get_note(note_id: int, db: DBConn, user: OptionalUser):
     return {**note, "tags": tags, "backlinks": backlinks}
 
 
-@router.post("/notes", status_code=201, response_model=NoteDetail)
+@router.post("/notes", status_code=201, response_model=NoteDetail, summary="建立新筆記")
 async def create_note(body: NoteCreate, db: DBConn, current_user: CurrentUser):
+    """
+    - `tags`：傳 name array，後端自動 upsert
+    - `content` 內的 `[[title]]` 自動解析並寫入 links table
+    """
     await get_vault_checked(db, body.vault_id, current_user, require_owner=True)
     row = await db.fetchrow(
         "INSERT INTO notes(vault_id, title, content) VALUES($1,$2,$3)"
@@ -136,8 +143,12 @@ async def create_note(body: NoteCreate, db: DBConn, current_user: CurrentUser):
     return {**note, "tags": tags, "backlinks": []}
 
 
-@router.patch("/notes/{note_id}", response_model=NoteDetail)
+@router.patch("/notes/{note_id}", response_model=NoteDetail, summary="更新筆記")
 async def update_note(note_id: int, body: NoteUpdate, db: DBConn, current_user: CurrentUser):
+    """
+    - 更新 `content` 時自動重新解析 `[[title]]` 並完整替換 links
+    - 更新 `tags` 時完整替換 note_tags
+    """
     note = await _get_note_or_raise(db, note_id)
     vault_row = await db.fetchrow("SELECT owner FROM vaults WHERE id=$1", note["vault_id"])
     if vault_row["owner"] != current_user["id"]:
@@ -171,7 +182,7 @@ async def update_note(note_id: int, body: NoteUpdate, db: DBConn, current_user: 
     return {**note, "tags": tags, "backlinks": backlinks}
 
 
-@router.delete("/notes/{note_id}", status_code=204)
+@router.delete("/notes/{note_id}", status_code=204, summary="刪除筆記")
 async def delete_note(note_id: int, db: DBConn, current_user: CurrentUser):
     note = await _get_note_or_raise(db, note_id)
     vault_row = await db.fetchrow("SELECT owner FROM vaults WHERE id=$1", note["vault_id"])

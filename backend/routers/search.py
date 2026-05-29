@@ -1,21 +1,28 @@
-import math
 from typing import Annotated
 
 from fastapi import APIRouter, Query
 
 from deps import DBConn, OptionalUser
+from schemas.common import PagedResponse
+from schemas.note import SearchResultItem
 
 router = APIRouter(tags=["search"])
 
 
-@router.get("/search")
+@router.get("/search", response_model=PagedResponse[SearchResultItem], summary="全文搜尋筆記")
 async def search_notes(
     db: DBConn,
     user: OptionalUser,
-    q: Annotated[str, Query(min_length=1)],
+    q: Annotated[str, Query(min_length=1, description="搜尋關鍵字")],
     page: Annotated[int, Query(ge=1)] = 1,
     size: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
+    """
+    使用 PostgreSQL `tsvector` 全文搜尋。
+
+    - 未登入：只搜尋公開 Vault 的筆記
+    - 已登入：搜尋公開 Vault + 自己的 Private Vault
+    """
     offset = (page - 1) * size
     base = (
         "SELECT n.id, n.title, n.vault_id, v.name AS vault_name, u.username AS owner_username,"
@@ -54,4 +61,4 @@ async def search_notes(
          "updated_at": r["updated_at"], "tags": tags_by_note[r["id"]]}
         for r in rows
     ]
-    return {"items": items, "total": total, "page": page, "size": size, "pages": math.ceil(total / size) if total else 0}
+    return PagedResponse.build(items, total, page, size)
