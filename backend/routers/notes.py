@@ -2,7 +2,7 @@ import math
 import re
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Form, Query, UploadFile
 
 from deps import DBConn, CurrentUser, OptionalUser
 from errors import AppError
@@ -189,3 +189,42 @@ async def delete_note(note_id: int, db: DBConn, current_user: CurrentUser):
     if vault_row["owner"] != current_user["id"]:
         raise AppError("FORBIDDEN", "無權限刪除此 Note", 403)
     await db.execute("DELETE FROM notes WHERE id=$1", note_id)
+
+
+@router.post("/notes/upload", status_code=201, response_model=NoteDetail, summary="上傳 .md 檔案建立筆記")
+async def upload_note(
+    db: DBConn,
+    current_user: CurrentUser,
+    file: UploadFile,
+    vault_id: int = Form(...),
+    tags: str = Form(default=""),
+):
+    """
+    上傳單一 `.md` 檔案：
+    - 檔名（去掉 `.md`）自動成為 title
+    - 支援 `[[wikilink]]` 解析
+    - `tags` 為逗號分隔字串，例如 `"linux,btrfs"`
+    """
+    if not file.filename or not file.filename.endswith(".md"):
+        raise AppError("BAD_REQUEST", "只接受 .md 檔案", 400)
+
+    try:
+        content = (await file.read()).decode("utf-8")
+    except UnicodeDecodeError:
+        raise AppError("BAD_REQUEST", "檔案必須為 UTF-8 編碼", 400)
+
+    title = file.filename[:-3]
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+
+    await get_vault_checked(db, vault_id, current_user, require_owner=True)
+
+    row = await db.fetchrow(
+        "INSERT INTO notes(vault_id, title, content) VALUES($1,$2,$3)"
+        " RETURNING id, title, content, vault_id, created_at, updated_at",
+        vault_id, title, content,
+    )
+    note = dict(row)
+    await _sync_note_tags(db, note["id"], tag_list)
+    await _sync_links(db, note["id"], vault_id, content)
+    note_tags = await _get_note_tags(db, note["id"])
+    return {**note, "tags": note_tags, "backlinks": []}
