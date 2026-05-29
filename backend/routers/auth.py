@@ -77,8 +77,8 @@ async def login(body: LoginRequest, response: Response, db: DBConn):
 
 
 @router.post("/logout", summary="登出")
-async def logout(response: Response):
-    """清除 `access_token` cookie。"""
+async def logout(response: Response, _: CurrentUser):
+    """清除 `access_token` cookie。需要有效的登入 token。"""
     response.delete_cookie("access_token")
     return {"message": "登出成功"}
 
