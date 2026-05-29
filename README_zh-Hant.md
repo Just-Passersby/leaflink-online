@@ -40,6 +40,14 @@
 | 開發運行 | `uvicorn main:app --reload`                               |
 | 生產運行 | `gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app` |
 
+啟動後端後，可在以下位置查看互動式 API 文件：
+
+| 工具 | URL |
+| :--: | :-- |
+| Swagger UI | http://localhost:8000/docs |
+| ReDoc | http://localhost:8000/redoc |
+| OpenAPI JSON | http://localhost:8000/openapi.json |
+
 ### 專案目錄架構
 ```
 leaflink-online

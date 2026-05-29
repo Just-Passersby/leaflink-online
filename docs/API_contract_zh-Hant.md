@@ -4,6 +4,10 @@
 
 **v1.1 變更：** 新增 `POST /notes/upload`（單一 .md 檔案上傳）、新增 `BAD_REQUEST` 錯誤碼。
 
+> **互動式 API 文件**：後端啟動後可直接在瀏覽器測試所有端點
+> - Swagger UI：http://localhost:8000/docs
+> - ReDoc：http://localhost:8000/redoc
+
 ---
 
 ## 目錄
