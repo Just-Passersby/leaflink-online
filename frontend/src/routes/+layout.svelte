@@ -39,10 +39,10 @@
 		background: radial-gradient(circle at top, #fdf6e5 0%, #f7f2e8 42%, #f1efe9 100%);
 		min-height: 100vh;
 	}
-
-	:global(a) {
-		color: inherit;
+	
+	.nav a, .auth-links a, .brand {
 		text-decoration: none;
+		color: inherit;
 	}
 
 	.app {

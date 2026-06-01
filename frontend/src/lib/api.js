@@ -1,10 +1,8 @@
+import.meta.env.VITE_API_BASE
+
 const DEFAULT_BASE = '';
 
 let apiBase = (import.meta?.env?.VITE_API_BASE ?? DEFAULT_BASE).trim();
-
-export function setApiBase(baseUrl) {
-	apiBase = (baseUrl ?? '').trim();
-}
 
 function buildUrl(path) {
 	if (!apiBase) return path;
@@ -32,23 +30,15 @@ export async function getJson(path) {
 	return response.json();
 }
 
-export async function postJson(path, body) {
-	const response = await apiFetch(path, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body ?? {})
-	});
-	return response.json();
-}
+const jsonBody = (method, path, body) =>
+  apiFetch(path, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body ?? {})
+  }).then(r => r.json());
 
-export async function patchJson(path, body) {
-	const response = await apiFetch(path, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body ?? {})
-	});
-	return response.json();
-}
+export const postJson = (path, body) => jsonBody('POST', path, body);
+export const patchJson = (path, body) => jsonBody('PATCH', path, body);
 
 export async function deleteJson(path) {
 	const response = await apiFetch(path, { method: 'DELETE' });
