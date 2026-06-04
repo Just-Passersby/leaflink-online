@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
 		proxy: {
-			'/auth': 'http://127.0.0.1:8000',
+			'/auth': { target: 'http://127.0.0.1:8000', changeOrigin: true },
 			'/notes': 'http://127.0.0.1:8000',
 			'/tags': 'http://127.0.0.1:8000',
 			'/vaults': 'http://127.0.0.1:8000',
