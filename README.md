@@ -65,10 +65,10 @@ leaflink-online
 - [ ] Markdown notes CRUD and browsing
 - [ ] Markdown notes and vaults upload
 - [ ] `[[Bi-directional links]]` resolve and backlink display
-- [ ] Tags system and Full-text search engine (PostgreSQL tsvector)
+- [ ] Tags system and Full-text search (PostgreSQL tsvector)
 
 ### Additional targets
-- [ ] Personal online Markdown note and vaults editing
+- [ ] Personal online Markdown notes and vaults editing
 - [ ] Knowledge network (D3.js)
 
 ## Database design
@@ -123,3 +123,14 @@ BCNF is a stricter standard than 3NF, requiring that every determinant must be a
 In every table, each determinant is a candidate key — no BCNF violations exist.
 
 **Result: All passed ✓**
+
+# Contributors
+- [Just-Passersby](https://github.com/Just-Passersby): Database + API + Docker deploy + Project planning
+- [Lcd0327](https://github.com/Lcd0327): Frontend development + API integration
+
+# Additional comment
+- Markdown notes are stored as plain text in the database.
+- Image upload is not implemented; only Markdown files are supported, to reduce complexity.
+
+# LICENSE
+leaflink-online is licensed under the [Apache 2.0 License](LICENSE)
