@@ -59,8 +59,8 @@ leaflink-online
 ## MVP
 ### Goal
 - User features
-  - [ ] User registration
-  - [ ] Login + JWT
+  - [x] User registration
+  - [x] Login + JWT
 - [ ] Vault privacy settings
 - [ ] Markdown notes CRUD and browsing
 - [ ] Markdown notes and vaults upload

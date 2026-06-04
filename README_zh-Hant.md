@@ -60,8 +60,8 @@ leaflink-online
 ## MVP
 ### 預定目標
 - 使用者功能
-  - [ ] 註冊功能
-  - [ ] 登入 + JWT
+  - [x] 註冊功能
+  - [x] 登入 + JWT
 - [ ] Vault 隱私權設定
 - [ ] Markdown 筆記 CRUD 與瀏覽
 - [ ] Markdown 筆記 / Vault 上傳
