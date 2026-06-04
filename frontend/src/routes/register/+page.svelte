@@ -5,8 +5,8 @@
 	let username = '';
 	let email = '';
 	let password = '';
-	let errorMessage = '';
-	let isSubmitting = false;
+	let errorMessage = $state('');
+	let isSubmitting = $state(false);
 
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -32,7 +32,7 @@
 		<p class="subtitle">Create an account to build your notes.</p>
 	</div>
 
-	<form class="card" on:submit={handleSubmit}>
+	<form class="card" onsubmit={handleSubmit}>
 		<label>
 			<span>Username</span>
 			<input type="text" bind:value={username} autocomplete="username" required />

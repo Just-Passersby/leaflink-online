@@ -31,7 +31,11 @@
 				<span class="muted">Checking session...</span>
 			{:else if $authUser}
 				<span class="user">Hi, {$authUser.username}</span>
-				<button class="ghost" type="button" on:click={logout}>Logout</button>
+				<button class="ghost" type="button" onclick={logout}>Logout</button>
+				<button class="ghost" type="button" onclick={() => logout().catch(e => console.error('Logout failed', e))}>Logout</button>
+				{#if $authStatus.error}
+					<span class="muted">{$authStatus.error}</span>
+				{/if}
 			{:else}
 				<a href="/login">Login</a>
 				<a class="button" href="/register">Register</a>
