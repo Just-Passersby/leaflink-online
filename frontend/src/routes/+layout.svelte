@@ -1,7 +1,13 @@
 <script>
+	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
+	import { authStatus, authUser, fetchMe, logout } from '$lib/auth.js';
 
 	let { children } = $props();
+
+	onMount(() => {
+		fetchMe().catch(() => {});
+	});
 </script>
 
 <svelte:head>
@@ -21,8 +27,18 @@
 			<a href="/search">Search</a>
 		</nav>
 		<div class="auth-links">
-			<a href="/login">Login</a>
-			<a class="button" href="/register">Register</a>
+			{#if $authStatus.loading}
+				<span class="muted">Checking session...</span>
+			{:else if $authUser}
+				<span class="user">Hi, {$authUser.username}</span>
+				<button class="ghost" type="button" onclick={() => logout().catch(e => console.error('Logout failed', e))}>Logout</button>
+			{:else}
+				{#if $authStatus.error}
+					<span class="muted">{$authStatus.error}</span>
+				{/if}
+				<a href="/login">Login</a>
+				<a class="button" href="/register">Register</a>
+			{/if}
 		</div>
 	</header>
 
@@ -98,6 +114,23 @@
 		background: #1b1b1b;
 		color: #fff;
 		font-weight: 600;
+	}
+
+	.auth-links .ghost {
+		padding: 0.45rem 0.85rem;
+		border-radius: 999px;
+		border: 1px solid #1b1b1b;
+		background: transparent;
+		font-weight: 600;
+	}
+
+	.user {
+		font-weight: 600;
+	}
+
+	.muted {
+		color: #6b5d4c;
+		font-size: 0.9rem;
 	}
 
 	.content {

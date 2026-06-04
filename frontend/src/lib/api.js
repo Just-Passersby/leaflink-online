@@ -1,6 +1,6 @@
 const DEFAULT_BASE = '';
 
-let apiBase = (import.meta?.env?.VITE_API_BASE ?? DEFAULT_BASE).trim();
+let apiBase = ((import.meta.env && import.meta.env.VITE_API_BASE) || DEFAULT_BASE).trim();
 
 function buildUrl(path) {
 	if (!apiBase) return path;
