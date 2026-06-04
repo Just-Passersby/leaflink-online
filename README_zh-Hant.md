@@ -27,8 +27,8 @@
 套件管理工具使用 `pnpm` \
 進入前端開發需要進入 `frontend` 目錄
 開發時使用以下指令：
-|       指令        | 說明                                     |
-| :---------------: | :--------------------------------------- |
+|       指令        | 說明                                        |
+| :---------------: | :------------------------------------------ |
 | `pnpm dev --open` | 運行 dev Server 監聽開發變化，`Ctrl+C` 關閉 |
 > 備註： `--open` 會自動打開分頁，如果不希望自動打開分頁請把該參數刪除
 
@@ -42,10 +42,10 @@
 
 啟動後端後，可在以下位置查看互動式 API 文件：
 
-| 工具 | URL |
-| :--: | :-- |
-| Swagger UI | http://localhost:8000/docs |
-| ReDoc | http://localhost:8000/redoc |
+|     工具     | URL                                |
+| :----------: | :--------------------------------- |
+|  Swagger UI  | http://localhost:8000/docs         |
+|    ReDoc     | http://localhost:8000/redoc        |
 | OpenAPI JSON | http://localhost:8000/openapi.json |
 
 ### 專案目錄架構
@@ -97,14 +97,14 @@ leaflink-online
 
 3NF 要求消除「遞移相依」——非主鍵屬性不得透過其他非主鍵屬性間接依賴主鍵。
 
-| 資料表 | 說明 |
-| :--- | :--- |
-| `users` | `username`、`email` 均為 UNIQUE NOT NULL，皆為候選鍵；無遞移相依 ✓ |
-| `vaults` | 所有屬性直接依賴 `id`；無遞移相依 ✓ |
-| `notes` | 所有屬性直接依賴 `id`；`search_vector` 為衍生欄位（`GENERATED`），不構成相依問題 ✓ |
-| `links` | `(src_note, dest_note)` 具有 UNIQUE 約束，為候選鍵；無遞移相依 ✓ |
-| `tags` | `name` 為 UNIQUE NOT NULL，為候選鍵；無遞移相依 ✓ |
-| `note_tags` | 無非主鍵屬性，trivially 滿足 ✓ |
+| 資料表      | 說明                                                                               |
+| :---------- | :--------------------------------------------------------------------------------- |
+| `users`     | `username`、`email` 均為 UNIQUE NOT NULL，皆為候選鍵；無遞移相依 ✓                 |
+| `vaults`    | 所有屬性直接依賴 `id`；無遞移相依 ✓                                                |
+| `notes`     | 所有屬性直接依賴 `id`；`search_vector` 為衍生欄位（`GENERATED`），不構成相依問題 ✓ |
+| `links`     | `(src_note, dest_note)` 具有 UNIQUE 約束，為候選鍵；無遞移相依 ✓                   |
+| `tags`      | `name` 為 UNIQUE NOT NULL，為候選鍵；無遞移相依 ✓                                  |
+| `note_tags` | 無非主鍵屬性，trivially 滿足 ✓                                                     |
 
 **結果：全部通過 ✓**
 
@@ -112,14 +112,14 @@ leaflink-online
 
 BCNF 是比 3NF 更嚴格的標準，要求每個「決定因子」（Determinant）都必須是候選鍵。
 
-| 資料表 | 候選鍵 | BCNF |
-| :--- | :--- | :---: |
-| `users` | `id`、`username`、`email` | ✓ |
-| `vaults` | `id` | ✓ |
-| `notes` | `id` | ✓ |
-| `links` | `id`、`(src_note, dest_note)` | ✓ |
-| `tags` | `id`、`name` | ✓ |
-| `note_tags` | `(note_id, tag_id)` | ✓ |
+| 資料表      | 候選鍵                        | BCNF  |
+| :---------- | :---------------------------- | :---: |
+| `users`     | `id`、`username`、`email`     |   ✓   |
+| `vaults`    | `id`                          |   ✓   |
+| `notes`     | `id`                          |   ✓   |
+| `links`     | `id`、`(src_note, dest_note)` |   ✓   |
+| `tags`      | `id`、`name`                  |   ✓   |
+| `note_tags` | `(note_id, tag_id)`           |   ✓   |
 
 所有資料表中，每個決定因子均為候選鍵，無 BCNF 違規。
 
