@@ -5,6 +5,7 @@
 	import { authUser } from '$lib/auth.js';
 	import { createNote, getVaultNotes } from '$lib/notes.js';
 	import { getVault, removeVault, updateVault } from '$lib/vaults.js';
+	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
 
 	let vault = $state(null);
 	let isOwner = $state(false);
@@ -173,10 +174,10 @@
 						<span>Title</span>
 						<input type="text" bind:value={noteTitle} maxlength="255" required />
 					</label>
-					<label>
+					<div class="field">
 						<span>Content</span>
-						<textarea bind:value={noteContent} rows="6" placeholder="# Heading\n\nWrite your note here..."></textarea>
-					</label>
+						<MarkdownEditor bind:value={noteContent} rows={6} placeholder="# Heading&#10;&#10;Write your note here..." />
+					</div>
 					<label>
 						<span>Tags</span>
 						<input type="text" bind:value={noteTags} placeholder="linux, btrfs, setup" />
@@ -285,8 +286,7 @@
 		color: #3f3327;
 	}
 
-	input[type='text'],
-	textarea {
+	input[type='text'] {
 		padding: 0.7rem 0.9rem;
 		border-radius: 0.75rem;
 		border: 1px solid rgba(17, 17, 17, 0.2);
@@ -294,8 +294,11 @@
 		background: #fff;
 	}
 
-	textarea {
-		resize: vertical;
+	.field {
+		display: grid;
+		gap: 0.45rem;
+		font-weight: 600;
+		color: #3f3327;
 	}
 
 	.toggle {

@@ -5,6 +5,8 @@
 	import { authUser } from '$lib/auth.js';
 	import { getNote, removeNote, updateNote } from '$lib/notes.js';
 	import { getVault } from '$lib/vaults.js';
+	import { marked } from 'marked';
+	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
 
 	let note = $state(null);
 	let isOwner = $state(false);
@@ -108,10 +110,10 @@
 					<span>Title</span>
 					<input type="text" bind:value={title} maxlength="255" required />
 				</label>
-				<label>
+				<div class="field">
 					<span>Content</span>
-					<textarea bind:value={content} rows="12" />
-				</label>
+					<MarkdownEditor bind:value={content} rows={12} placeholder="# Heading&#10;&#10;Write your note here..." />
+				</div>
 				<label>
 					<span>Tags</span>
 					<input type="text" bind:value={tagsText} placeholder="linux, btrfs" />
@@ -128,7 +130,9 @@
 		<div class="layout">
 			<section class="panel">
 				<h2>Content</h2>
-				<pre>{note.content}</pre>
+				<div class="prose rendered">
+					{@html marked(note.content || '')}
+				</div>
 			</section>
 
 			<section class="panel">
@@ -263,15 +267,109 @@
 		background: #9b3a2d;
 	}
 
-	pre {
-		margin: 0;
-		padding: 1rem;
+	.field {
+		display: grid;
+		gap: 0.45rem;
+		font-weight: 600;
+		color: #3f3327;
+	}
+
+	.rendered {
+		padding: 0.9rem 1rem;
 		border-radius: 1rem;
 		background: #f8f4ec;
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-family: inherit;
-		line-height: 1.6;
+		line-height: 1.7;
+	}
+
+	.rendered :global(h1),
+	.rendered :global(h2),
+	.rendered :global(h3),
+	.rendered :global(h4) {
+		margin: 1rem 0 0.4rem;
+		color: #1b1b1b;
+	}
+
+	.rendered :global(h1) {
+		font-size: 1.5rem;
+	}
+	.rendered :global(h2) {
+		font-size: 1.25rem;
+	}
+	.rendered :global(h3) {
+		font-size: 1.05rem;
+	}
+
+	.rendered :global(p) {
+		margin: 0.5rem 0;
+		color: #3f3327;
+	}
+
+	.rendered :global(code) {
+		background: #ece3d2;
+		padding: 0.15rem 0.35rem;
+		border-radius: 0.35rem;
+		font-size: 0.88em;
+		font-family: 'Courier New', monospace;
+	}
+
+	.rendered :global(pre) {
+		background: #ece3d2;
+		padding: 0.9rem;
+		border-radius: 0.6rem;
+		overflow-x: auto;
+		margin: 0.75rem 0;
+	}
+
+	.rendered :global(pre code) {
+		background: none;
+		padding: 0;
+	}
+
+	.rendered :global(blockquote) {
+		border-left: 3px solid #c9b99a;
+		margin: 0.75rem 0;
+		padding: 0.2rem 0.9rem;
+		color: #6b5d4c;
+	}
+
+	.rendered :global(ul),
+	.rendered :global(ol) {
+		padding-left: 1.4rem;
+		margin: 0.5rem 0;
+		color: #3f3327;
+	}
+
+	.rendered :global(li) {
+		margin: 0.2rem 0;
+	}
+
+	.rendered :global(a) {
+		color: #7a5c3a;
+	}
+
+	.rendered :global(table) {
+		border-collapse: collapse;
+		width: 100%;
+		margin: 0.75rem 0;
+		font-size: 0.92rem;
+	}
+
+	.rendered :global(th),
+	.rendered :global(td) {
+		border: 1px solid #e0d5c5;
+		padding: 0.4rem 0.7rem;
+		text-align: left;
+	}
+
+	.rendered :global(th) {
+		background: #ece3d2;
+		font-weight: 600;
+	}
+
+	.rendered :global(hr) {
+		border: none;
+		border-top: 1px solid #e0d5c5;
+		margin: 1rem 0;
 	}
 
 	.chip-row {
