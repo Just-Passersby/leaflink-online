@@ -84,7 +84,7 @@
 							</p>
 						</div>
 						<div class="tag-row">
-							{#each note.tags as tag}
+							{#each (note.tags ?? []) as tag}
 								<span class="tag">{tag.name}</span>
 							{/each}
 						</div>
