@@ -11,11 +11,12 @@
 		</div>
 	</div>
 	<div class="card">
-		<h3>Day 1 focus</h3>
+		<h3>Features</h3>
 		<ul>
-			<li>Routing scaffold</li>
-			<li>Global layout shell</li>
-			<li>API client setup</li>
+			<li>Markdown notes with live preview</li>
+			<li><code>[[WikiLink]]</code> backlinks</li>
+			<li>Tags &amp; full-text search</li>
+			<li>Public &amp; private vaults</li>
 		</ul>
 	</div>
 </section>
