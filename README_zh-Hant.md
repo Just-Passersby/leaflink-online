@@ -7,6 +7,27 @@
 
 啟發於 Obsidian，將 Obsidian 的功能實作成簡單的網頁版。
 
+## 快速啟動
+
+> **前置需求：** [Docker](https://docs.docker.com/get-docker/) 與 Docker Compose
+
+1. Clone 此專案。
+2. 複製環境變數範例檔並填入自訂的密碼與金鑰：
+   ```bash
+   cp .env.example .env
+   ```
+   編輯 `.env`，將 `POSTGRES_PASSWORD` 和 `JWT_SECRET` 設定為你自己的值。
+3. 一行指令啟動資料庫、後端、前端三個容器：
+   ```bash
+   docker compose up --build
+   ```
+4. 開啟瀏覽器：
+
+| 服務         | URL                          |
+| :----------: | :--------------------------- |
+| 前端         | http://localhost             |
+| 後端 API 文件 | http://localhost:8000/docs  |
+
 ## 技術棧
 ### 前端
 框架：SvelteKit\

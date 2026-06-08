@@ -6,6 +6,27 @@
 
 A simple web-based implementation of Obsidian's core features.
 
+## Quick Start
+
+> **Prerequisites:** [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+
+1. Clone this repository.
+2. Copy the example environment file and fill in your own secrets:
+   ```bash
+   cp .env.example .env
+   ```
+   Open `.env` and set `POSTGRES_PASSWORD` and `JWT_SECRET` to values of your choice.
+3. Start all three services (database, backend, frontend) with a single command:
+   ```bash
+   docker compose up --build
+   ```
+4. Open your browser:
+
+| Service      | URL                          |
+| :----------: | :--------------------------- |
+| Frontend     | http://localhost             |
+| Backend docs | http://localhost:8000/docs   |
+
 ## Tech stack
 ### Frontend
 Framework: SvelteKit\
