@@ -6,6 +6,7 @@
 	import { getNote, removeNote, updateNote } from '$lib/notes.js';
 	import { getVault } from '$lib/vaults.js';
 	import { marked } from 'marked';
+	import DOMPurify from 'dompurify';
 	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
 
 	let note = $state(null);
@@ -131,7 +132,7 @@
 			<section class="panel">
 				<h2>Content</h2>
 				<div class="prose rendered">
-					{@html marked(note.content || '')}
+					{@html DOMPurify.sanitize(String(marked.parse(note.content || '')))}
 				</div>
 			</section>
 

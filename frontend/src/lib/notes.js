@@ -1,13 +1,4 @@
-import { deleteJson, getJson, patchJson, postJson } from '$lib/api.js';
-
-function addQuery(path, params = {}) {
-	const url = new URL(path, 'http://localhost');
-	for (const [key, value] of Object.entries(params)) {
-		if (value === undefined || value === null || value === '') continue;
-		url.searchParams.set(key, String(value));
-	}
-	return `${url.pathname}${url.search}`;
-}
+import { addQuery, deleteJson, getJson, patchJson, postJson } from '$lib/api.js';
 
 export function getVaultNotes(vaultId, params = {}) {
 	return getJson(addQuery(`/vaults/${vaultId}/notes`, params));

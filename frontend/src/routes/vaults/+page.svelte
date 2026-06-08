@@ -4,15 +4,15 @@
 	import { authUser } from '$lib/auth.js';
 	import { createVault, getExploreVaults, getMyVaults } from '$lib/vaults.js';
 
-	let myVaults = [];
-	let exploreVaults = [];
-	let myTotal = 0;
-	let exploreTotal = 0;
-	let isLoading = true;
-	let errorMessage = '';
-	let createName = '';
-	let createPublic = false;
-	let creating = false;
+	let myVaults = $state([]);
+	let exploreVaults = $state([]);
+	let myTotal = $state(0);
+	let exploreTotal = $state(0);
+	let isLoading = $state(true);
+	let errorMessage = $state('');
+	let createName = $state('');
+	let createPublic = $state(false);
+	let creating = $state(false);
 
 	async function loadVaults() {
 		isLoading = true;
@@ -66,7 +66,7 @@
 			</p>
 		</div>
 
-		<form class="create-card" on:submit={handleCreate}>
+		<form class="create-card" onsubmit={handleCreate}>
 			<h2>Create vault</h2>
 			<label>
 				<span>Name</span>

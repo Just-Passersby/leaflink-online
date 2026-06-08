@@ -1,5 +1,14 @@
 const DEFAULT_BASE = '';
 
+export function addQuery(path, params = {}) {
+	const url = new URL(path, 'http://localhost');
+	for (const [key, value] of Object.entries(params)) {
+		if (value === undefined || value === null || value === '') continue;
+		url.searchParams.set(key, String(value));
+	}
+	return `${url.pathname}${url.search}`;
+}
+
 let apiBase = ((import.meta.env && import.meta.env.VITE_API_BASE) || DEFAULT_BASE).trim();
 
 function buildUrl(path) {
