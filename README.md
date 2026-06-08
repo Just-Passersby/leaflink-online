@@ -61,14 +61,14 @@ leaflink-online
 - User features
   - [x] User registration
   - [x] Login + JWT
-- [ ] Vault privacy settings
-- [ ] Markdown notes CRUD and browsing
+- [x] Vault privacy settings
+- [x] Markdown notes CRUD and browsing
 - [ ] Markdown notes and vaults upload
 - [ ] `[[Bi-directional links]]` resolve and backlink display
 - [ ] Tags system and Full-text search (PostgreSQL tsvector)
 
 ### Additional targets
-- [ ] Personal online Markdown notes and vaults editing
+- [x] Personal online Markdown notes and vaults editing
 - [ ] Knowledge network (D3.js)
 
 ## Database design
