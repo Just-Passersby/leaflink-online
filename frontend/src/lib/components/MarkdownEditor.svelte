@@ -1,10 +1,9 @@
 <script>
-	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
+	import { renderMarkdown } from '$lib/markdown.js';
 
 	let { value = $bindable(''), rows = 10, placeholder = '' } = $props();
 	let tab = $state('edit');
-	let previewHtml = $derived(DOMPurify.sanitize(String(marked.parse(value || ''))));
+	let previewHtml = $derived(renderMarkdown(value));
 </script>
 
 <div class="md-editor">

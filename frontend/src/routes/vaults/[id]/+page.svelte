@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { authUser } from '$lib/auth.js';
-	import { createNote, getVaultNotes } from '$lib/notes.js';
+	import { createNote, getVaultNotes, uploadNote } from '$lib/notes.js';
 	import { getVault, removeVault, updateVault } from '$lib/vaults.js';
 	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
 
@@ -22,6 +22,9 @@
 	let noteTitle = $state('');
 	let noteContent = $state('');
 	let noteTags = $state('');
+	let uploadFile = $state(null);
+	let uploadTags = $state('');
+	let uploading = $state(false);
 
 	function normalizeTags(value) {
 		return value
@@ -94,6 +97,24 @@
 			notesError = error?.message || 'Failed to create note.';
 		} finally {
 			creatingNote = false;
+		}
+	}
+
+	async function handleUpload(event) {
+		event.preventDefault();
+		if (uploading || !uploadFile) return;
+		uploading = true;
+		notesError = '';
+		try {
+			const created = await uploadNote(page.params.id, uploadFile, uploadTags);
+			uploadFile = null;
+			uploadTags = '';
+			await loadNotes();
+			goto(`/notes/${created.id}`);
+		} catch (error) {
+			notesError = error?.message || 'Failed to upload note.';
+		} finally {
+			uploading = false;
 		}
 	}
 
@@ -184,6 +205,25 @@
 					</label>
 					<button type="submit" disabled={creatingNote}>
 						{creatingNote ? 'Creating...' : 'Create note'}
+					</button>
+				</form>
+
+				<form class="note-form upload-form" onsubmit={handleUpload}>
+					<p class="upload-label">Or upload a <code>.md</code> file</p>
+					<label>
+						<span>File</span>
+						<input
+							type="file"
+							accept=".md"
+							onchange={(e) => { uploadFile = e.target.files?.[0] ?? null; }}
+						/>
+					</label>
+					<label>
+						<span>Tags</span>
+						<input type="text" bind:value={uploadTags} placeholder="linux, btrfs" />
+					</label>
+					<button type="submit" disabled={uploading || !uploadFile}>
+						{uploading ? 'Uploading...' : 'Upload note'}
 					</button>
 				</form>
 			{/if}
@@ -316,6 +356,24 @@
 	.note-form {
 		display: grid;
 		gap: 0.9rem;
+	}
+
+	.upload-form {
+		border-top: 1px solid rgba(17, 17, 17, 0.08);
+		padding-top: 1rem;
+	}
+
+	.upload-label {
+		margin: 0;
+		font-size: 0.9rem;
+		color: #6b5d4c;
+	}
+
+	.upload-label code {
+		background: #f0e8d8;
+		padding: 0.1rem 0.35rem;
+		border-radius: 0.3rem;
+		font-size: 0.88em;
 	}
 
 	.notes-list {
