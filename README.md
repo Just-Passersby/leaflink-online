@@ -63,9 +63,9 @@ leaflink-online
   - [x] Login + JWT
 - [x] Vault privacy settings
 - [x] Markdown notes CRUD and browsing
-- [ ] Markdown notes and vaults upload
+- [x] Markdown notes and vaults upload
 - [ ] `[[Bi-directional links]]` resolve and backlink display
-- [ ] Tags system and Full-text search (PostgreSQL tsvector)
+- [x] Tags system and Full-text search (PostgreSQL tsvector)
 
 ### Additional targets
 - [x] Personal online Markdown notes and vaults editing

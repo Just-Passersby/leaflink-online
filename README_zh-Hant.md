@@ -64,9 +64,9 @@ leaflink-online
   - [x] 登入 + JWT
 - [x] Vault 隱私權設定
 - [x] Markdown 筆記 CRUD 與瀏覽
-- [ ] Markdown 筆記 / Vault 上傳
+- [x] Markdown 筆記 / Vault 上傳
 - [ ] `[[雙向連結]]`解析與 Backlinks 顯示
-- [ ] 標籤系統與全文搜尋（PostgreSQL tsvector）
+- [x] 標籤系統與全文搜尋（PostgreSQL tsvector）
 
 ### 額外目標
 - [x] 個人線上編輯 Markdown 筆記和 Vault
