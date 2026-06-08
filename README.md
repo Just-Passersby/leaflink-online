@@ -64,7 +64,7 @@ leaflink-online
 - [x] Vault privacy settings
 - [x] Markdown notes CRUD and browsing
 - [x] Markdown notes and vaults upload
-- [ ] `[[Bi-directional links]]` resolve and backlink display
+- [x] `[[Bi-directional links]]` resolve and backlink display
 - [x] Tags system and Full-text search (PostgreSQL tsvector)
 
 ### Additional targets

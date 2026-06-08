@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { authUser } from '$lib/auth.js';
-	import { getNote, removeNote, updateNote } from '$lib/notes.js';
+	import { getNote, getVaultNotes, removeNote, updateNote } from '$lib/notes.js';
 	import { getVault } from '$lib/vaults.js';
 	import { renderMarkdown } from '$lib/markdown.js';
 	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
@@ -17,6 +17,7 @@
 	let tagsText = $state('');
 	let saving = $state(false);
 	let deleting = $state(false);
+	let titleMap = $state({});
 
 	function toTagText(tags) {
 		return (tags ?? []).map((tag) => tag.name).join(', ');
@@ -34,11 +35,15 @@
 		errorMessage = '';
 		try {
 			note = await getNote(page.params.id);
-			const vault = await getVault(note.vault_id);
+			const [vault, notesRes] = await Promise.all([
+				getVault(note.vault_id),
+				getVaultNotes(note.vault_id, { page: 1, size: 500 })
+			]);
 			title = note.title;
 			content = note.content;
 			tagsText = toTagText(note.tags);
 			isOwner = Boolean($authUser && vault.owner_username === $authUser.username);
+			titleMap = Object.fromEntries((notesRes.items ?? []).map((n) => [n.title, n.id]));
 		} catch (error) {
 			errorMessage = error?.message || 'Failed to load note.';
 		} finally {
@@ -131,7 +136,7 @@
 			<section class="panel">
 				<h2>Content</h2>
 				<div class="prose rendered">
-					{@html renderMarkdown(note.content)}
+					{@html renderMarkdown(note.content, titleMap)}
 				</div>
 			</section>
 
