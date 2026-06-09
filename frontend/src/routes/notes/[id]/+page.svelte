@@ -37,7 +37,7 @@
 			note = await getNote(page.params.id);
 			const [vault, notesRes] = await Promise.all([
 				getVault(note.vault_id),
-				getVaultNotes(note.vault_id, { page: 1, size: 500 })
+				getVaultNotes(note.vault_id, { page: 1, size: 100 })
 			]);
 			title = note.title;
 			content = note.content;
