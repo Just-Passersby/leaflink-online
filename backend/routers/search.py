@@ -28,7 +28,8 @@ async def search_notes(
         "SELECT n.id, n.title, n.vault_id, v.name AS vault_name, u.username AS owner_username,"
         " n.updated_at, COUNT(*) OVER() AS total"
         " FROM notes n JOIN vaults v ON v.id = n.vault_id JOIN users u ON u.id = v.owner"
-        " WHERE n.search_vector @@ plainto_tsquery('simple', $1)"
+        " WHERE (n.search_vector @@ plainto_tsquery('simple', $1)"
+        "   OR n.title ILIKE '%' || $1 || '%' OR n.content ILIKE '%' || $1 || '%')"
     )
 
     if user:
