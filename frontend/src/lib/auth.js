@@ -7,7 +7,14 @@ export const authStatus = writable({ loading: false, error: '' });
 export async function fetchMe() {
 	authStatus.set({ loading: true, error: '' });
 	try {
-		const data = await getJson('/auth/me');
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), 8000);
+		let data;
+		try {
+			data = await getJson('/auth/me', { signal: controller.signal });
+		} finally {
+			clearTimeout(timer);
+		}
 		authUser.set(data);
 		authStatus.set({ loading: false, error: '' });
 		return data;
@@ -18,8 +25,9 @@ export async function fetchMe() {
 			return null;
 		}
 
-		authStatus.set({ loading: false, error: error?.message || 'Unable to load user.' });
-		throw error;
+		authUser.set(null);
+		authStatus.set({ loading: false, error: '' });
+		return null;
 	}
 }
 

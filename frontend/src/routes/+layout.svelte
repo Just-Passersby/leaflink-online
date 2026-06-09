@@ -27,14 +27,12 @@
 			<a href="/search">Search</a>
 		</nav>
 		<div class="auth-links">
-			{#if $authStatus.loading}
-				<span class="muted">Checking session...</span>
-			{:else if $authUser}
+			{#if $authUser}
 				<span class="user">Hi, {$authUser.username}</span>
 				<button class="ghost" type="button" onclick={() => logout().catch(e => console.error('Logout failed', e))}>Logout</button>
 			{:else}
-				{#if $authStatus.error}
-					<span class="muted">{$authStatus.error}</span>
+				{#if $authStatus.loading}
+					<span class="muted">Checking session...</span>
 				{/if}
 				<a href="/login">Login</a>
 				<a class="button" href="/register">Register</a>

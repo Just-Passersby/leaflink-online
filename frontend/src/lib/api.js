@@ -32,8 +32,8 @@ export async function apiFetch(path, options = {}) {
 	return response;
 }
 
-export async function getJson(path) {
-	const response = await apiFetch(path);
+export async function getJson(path, options = {}) {
+	const response = await apiFetch(path, options);
 	return response.json();
 }
 
