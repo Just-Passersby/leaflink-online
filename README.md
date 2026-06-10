@@ -72,9 +72,24 @@ Once the backend is running, interactive API documentation is available at:
 ```
 leaflink-online
 ├── frontend/
-├── backend/  
+│   ├── src/
+│   │   ├── lib/          # API client, auth helpers, Markdown utilities
+│   │   └── routes/       # SvelteKit pages (/, /login, /register, /vaults, /notes, /search)
+│   ├── nginx.conf        # Nginx reverse proxy config (runtime envsubst)
+│   └── Dockerfile
+├── backend/
+│   ├── routers/          # FastAPI route handlers (auth, vaults, notes, tags, search)
+│   ├── schemas/          # Pydantic request/response models
+│   ├── main.py           # App entry point, CORS config
+│   ├── config.py         # Settings (reads from env vars)
+│   └── Dockerfile
 ├── db/
-└── README.md
+│   └── init.sql          # Schema DDL, tsvector trigger
+├── docs/
+│   ├── API_contract_zh-Hant.md
+│   └── webFP.svg         # ER diagram
+├── docker-compose.yml
+└── .env.example
 ```
 
 ## MVP

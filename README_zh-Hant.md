@@ -73,9 +73,24 @@
 ```
 leaflink-online
 ├── frontend/
-├── backend/  
+│   ├── src/
+│   │   ├── lib/          # API client、Auth helper、Markdown 工具函式
+│   │   └── routes/       # SvelteKit 頁面（/、/login、/register、/vaults、/notes、/search）
+│   ├── nginx.conf        # Nginx 反向代理設定（執行期 envsubst）
+│   └── Dockerfile
+├── backend/
+│   ├── routers/          # FastAPI 路由處理器（auth、vaults、notes、tags、search）
+│   ├── schemas/          # Pydantic 請求 / 回應模型
+│   ├── main.py           # 應用程式進入點、CORS 設定
+│   ├── config.py         # 設定（從環境變數讀取）
+│   └── Dockerfile
 ├── db/
-└── README.md
+│   └── init.sql          # Schema DDL、tsvector trigger
+├── docs/
+│   ├── API_contract_zh-Hant.md
+│   └── webFP.svg         # ER 圖
+├── docker-compose.yml
+└── .env.example
 ```
 
 ## MVP
