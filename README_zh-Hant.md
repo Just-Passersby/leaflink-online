@@ -111,6 +111,12 @@ leaflink-online
 ## 資料庫設計
 ![](./docs/webFP.svg)
 
+### ER 圖與實作的差異說明
+上圖為概念層 ER，僅描述實體、屬性與關係。實際 schema（`db/init.sql`）另含三類物理層設計，刻意不畫入 ER 圖以保持概念清晰：
+1. **衍生欄位** — `notes.search_vector`（`GENERATED`，由 `title`、`content` 產生），供全文搜尋使用，非獨立屬性。
+2. **效能索引** — `notes` 上的 B-tree 與 GIN 索引。
+3. **行為與參照完整性** — `updated_at` 自動更新 trigger、外鍵 `ON DELETE CASCADE`。
+
 ## 資料庫正規化分析
 
 ### 1NF（第一正規化）

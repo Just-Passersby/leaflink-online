@@ -110,6 +110,12 @@ leaflink-online
 ## Database design
 ![](./docs/webFP.svg)
 
+### ER diagram vs. implementation
+The diagram above is a conceptual-level ER model — it describes only entities, attributes, and relationships. The actual schema (`db/init.sql`) additionally contains three categories of physical-layer design, intentionally left out of the ER diagram to keep the conceptual model clean:
+1. **Derived column** — `notes.search_vector` (`GENERATED` from `title` and `content`), used for full-text search; not an independent attribute.
+2. **Performance indexes** — B-tree and GIN indexes on `notes`.
+3. **Behavior & referential integrity** — the `updated_at` auto-update trigger and `ON DELETE CASCADE` foreign keys.
+
 ## Database Normalization Analysis
 
 ### 1NF (First Normal Form)
